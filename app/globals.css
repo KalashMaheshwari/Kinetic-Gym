@@ -20,6 +20,13 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* --- NEW FONT CLASS --- */
+.font-syncopate {
+  font-family: var(--font-syncopate), sans-serif;
+  /* Syncopate looks best uppercase, so let's force that here too */
+  text-transform: uppercase;
+}
+
 .font-gothic {
   font-family: 'UnifrakturMaguntia', cursive;
 }
