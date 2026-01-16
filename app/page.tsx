@@ -21,73 +21,91 @@ if (typeof window !== 'undefined') {
 }
 
 // --- 2. MODERN RADAR CLOCK (Massive & Fading Trail) ---
+// --- MODERN RADAR CLOCK (WITH 60 TICKS) ---
 const ModernClock = () => {
   const [time, setTime] = useState<Date | null>(null);
 
   useEffect(() => {
-    setTime(new Date()); 
-    const timer = setInterval(() => setTime(new Date()), 50); // High refresh for smooth sweep
+    setTime(new Date());
+    // High refresh rate for smooth radar sweep
+    const timer = setInterval(() => setTime(new Date()), 16); 
     return () => clearInterval(timer);
   }, []);
 
-  if (!time) return <div className="w-64 h-64 rounded-full border border-white/10 bg-[#080808]" />;
+  // Prevent hydration mismatch
+  if (!time) return <div className="w-64 h-64 rounded-full border border-white/10 bg-black" />;
 
   const seconds = time.getSeconds();
   const minutes = time.getMinutes();
   const hours = time.getHours() % 12;
   const millis = time.getMilliseconds();
 
-  // Smooth rotation math
+  // Smooth rotation logic
   const smoothSec = seconds + millis / 1000;
-  const secDeg = smoothSec * 6;
+  const secDeg = smoothSec * 6; 
   const minDeg = minutes * 6 + seconds * 0.1;
   const hourDeg = hours * 30 + minutes * 0.5;
 
   return (
-    <div className="relative group scale-75 md:scale-100 origin-right">
-       {/* Ambient Back Glow */}
-       <div className="absolute inset-0 bg-accent/5 rounded-full blur-3xl opacity-50" />
+    <div className="relative group scale-90 md:scale-100">
+       {/* Outer Glow */}
+       <div className="absolute inset-0 bg-accent/10 rounded-full blur-2xl" />
        
-       <div className="w-64 h-64 relative flex items-center justify-center rounded-full bg-[#080808] border border-white/10 shadow-2xl overflow-hidden">
+       <div className="w-64 h-64 relative flex items-center justify-center rounded-full bg-black border border-white/10 shadow-2xl overflow-hidden">
            
-           {/* RADAR FADE TRAIL (The requested fade effect) */}
+           {/* 1. RADAR SWEEP (Acts as Second Hand) */}
            <div 
              className="absolute inset-0 rounded-full"
              style={{
-               background: `conic-gradient(from ${secDeg}deg, transparent 0deg, transparent 270deg, rgba(204, 255, 0, 0.2) 360deg)`,
-               transform: 'rotate(180deg)' // Offset to trail behind
+               background: `conic-gradient(from 0deg, transparent 0%, rgba(204, 255, 0, 0.1) 80%, rgba(204, 255, 0, 0.8) 100%)`,
+               transform: `rotate(${secDeg}deg)`,
+               transition: 'none'
              }}
            />
 
-           {/* Inner Dark Face (Masking the center of the gradient) */}
-           <div className="absolute inset-2 rounded-full bg-[#050505] border border-white/5" />
+           {/* 2. INNER FACE (Darkens center) */}
+           <div className="absolute inset-1 rounded-full bg-black/90 backdrop-blur-sm" />
 
-           {/* Dial Markers */}
+           {/* 3. FULL 60 MARKERS */}
            {[...Array(60)].map((_, i) => {
               const isHour = i % 5 === 0;
               return (
                 <div 
                     key={i} 
-                    className={`absolute origin-bottom bottom-1/2 left-1/2 -translate-x-1/2 z-10 ${isHour ? 'w-0.5 h-4 bg-white' : 'w-[1px] h-1.5 bg-white/20'}`} 
-                    style={{ transform: `translateX(-50%) rotate(${i * 6}deg) translate(0, -110px)` }} 
+                    className={`absolute origin-bottom bottom-1/2 left-1/2 -translate-x-1/2 z-10 
+                        ${isHour ? 'w-0.5 h-3 bg-white' : 'w-[1px] h-1.5 bg-white/30'}`}
+                    style={{ 
+                        transform: `translateX(-50%) rotate(${i * 6}deg) translate(0, -115px)` 
+                    }} 
                 />
               )
            })}
 
+           {/* 4. HANDS (White & Crisp) */}
+           
            {/* Hour Hand */}
-           <div className="absolute w-1.5 h-16 bg-white rounded-full origin-bottom bottom-1/2 left-1/2 -translate-x-1/2 z-20 shadow-black/50 shadow-lg" 
-                style={{ transform: `translateX(-50%) rotate(${hourDeg}deg)` }} />
+           <div 
+                className="absolute w-1.5 h-16 bg-white rounded-full origin-bottom z-20 shadow-black shadow-lg"
+                style={{ 
+                    bottom: '50%', 
+                    left: '50%', 
+                    transform: `translateX(-50%) rotate(${hourDeg}deg)` 
+                }} 
+           />
            
            {/* Minute Hand */}
-           <div className="absolute w-1 h-24 bg-white/50 rounded-full origin-bottom bottom-1/2 left-1/2 -translate-x-1/2 z-30 mix-blend-overlay" 
-                style={{ transform: `translateX(-50%) rotate(${minDeg}deg)` }} />
-           
-           {/* Second Hand (Sharp Lime) */}
-           <div className="absolute w-[2px] h-28 bg-[#CCFF00] origin-bottom bottom-1/2 left-1/2 -translate-x-1/2 z-40 shadow-[0_0_15px_#CCFF00]" 
-                style={{ transform: `translateX(-50%) rotate(${secDeg}deg)` }} />
-           
-           {/* Center Hub */}
-           <div className="absolute w-3 h-3 bg-[#080808] border-2 border-[#CCFF00] rounded-full z-50" />
+           <div 
+                className="absolute w-1 h-24 bg-white rounded-full origin-bottom z-20 shadow-black shadow-lg"
+                style={{ 
+                    bottom: '50%', 
+                    left: '50%', 
+                    transform: `translateX(-50%) rotate(${minDeg}deg)` 
+                }} 
+           />
+
+           {/* Center Cap */}
+           <div className="absolute w-3 h-3 bg-white rounded-full z-30 border-2 border-black" />
+           <div className="absolute w-1 h-1 bg-accent rounded-full z-40" />
        </div>
     </div>
   );
@@ -694,7 +712,7 @@ export default function Home() {
               <div className="mt-12 font-mono text-[10px] text-white/30 leading-loose">
                  COPYRIGHT 2024 © KINETIC<br/>
                  ALL RIGHTS RESERVED.<br/>
-                 SYSTEM VERSION 2.1.0.4
+                 SYSTEM VERSION 2.0.4
               </div>
            </div>
 
