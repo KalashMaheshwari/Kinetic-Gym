@@ -10,8 +10,8 @@ export const CustomCursor = () => {
   const [isClicking, setIsClicking] = useState(false);
 
   // Performance tracking
-  const xTo = useRef<any>();
-  const yTo = useRef<any>();
+  const xTo = useRef<any>(null);
+  const yTo = useRef<any>(null);
   
   // Velocity Physics
   const previousPos = useRef({ x: 0, y: 0 });
