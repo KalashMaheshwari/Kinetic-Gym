@@ -694,7 +694,7 @@ export default function Home() {
               <div className="mt-12 font-mono text-[10px] text-white/30 leading-loose">
                  COPYRIGHT 2024 © KINETIC<br/>
                  ALL RIGHTS RESERVED.<br/>
-                 SYSTEM VERSION 2.0.4
+                 SYSTEM VERSION 2.1.0.4
               </div>
            </div>
 
