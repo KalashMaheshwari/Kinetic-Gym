@@ -9,7 +9,7 @@ import { Philosophy } from '@/components/home/Philosophy';
 import { Principles } from '@/components/home/Principles';
 import Footer from '@/components/home/Footer'; 
 import Navbar from '@/components/layout/Navbar';
-import { ArrowRight, Crosshair, Zap, Activity, Dumbbell, HeartPulse, Timer, Scan, Check, Shield, Crown, Flame, Cpu, Dna, Anchor, Radio } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Crosshair, Zap, Activity, Dumbbell, HeartPulse, Timer, Scan, Check, Shield, Crown, Flame, Cpu, Dna, Anchor, Radio } from 'lucide-react';
 import { motion, AnimatePresence, useMotionValue, useSpring, useMotionTemplate, useScroll, useVelocity, useTransform, useAnimationFrame } from 'framer-motion';
 
 const wrap = (min: number, max: number, v: number) => {
@@ -138,6 +138,9 @@ export default function Home() {
   const slidesRef = useRef<HTMLDivElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
   
+  // Ref for Mobile Method Horizontal Scroll
+  const methodScrollRef = useRef<HTMLDivElement>(null);
+
   const [activeSlide, setActiveSlide] = useState(1);
   const [activeMethod, setActiveMethod] = useState(0);
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
@@ -177,44 +180,52 @@ export default function Home() {
     });
   }, { scope: container });
 
+  // Mobile Scroll Handler for Methods
+  const scrollMethods = (direction: 'left' | 'right') => {
+    if (methodScrollRef.current) {
+      const scrollAmount = 300; // Approximate card width
+      methodScrollRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   const protocols = useMemo(() => [
-    { title: "Hypertrophy", fullTitle: "STRUCTURAL HYPERTROPHY", content: "Maximal muscle damage. Overloading fibers to force biological adaptation.", index: "01", color: "#ff3333", icon: <Dumbbell className="w-5 h-5" />, stats: [{ label: "INTENSITY", value: 85 }, { label: "VOLUME", value: 90 }], image: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=1200" },
-    { title: "Neural Drive", fullTitle: "NEURAL POTENTIATION", content: "Rewiring the CNS. Moving heavy loads with maximal explosive intent.", index: "02", color: "#33bbff", icon: <Zap className="w-5 h-5" />, stats: [{ label: "INTENSITY", value: 98 }, { label: "SPEED", value: 90 }], image: "https://images.unsplash.com/photo-1550345332-09e3ac987658?q=80&w=1200" },
-    { title: "Metabolic", fullTitle: "METABOLIC CAPACITY", content: "Pushing the lactate threshold. High-density work to strip fat and build engine.", index: "03", color: "#ffaa00", icon: <HeartPulse className="w-5 h-5" />, stats: [{ label: "VOLUME", value: 100 }, { label: "SWEAT", value: 100 }], image: "https://images.unsplash.com/photo-1517963879433-6ad2b056d712?q=80&w=1200" },
-    { title: "Restoration", fullTitle: "ACTIVE RESTORATION", content: "Joint mobilization and flow work to ensure structural integrity.", index: "04", color: "#00ffaa", icon: <Timer className="w-5 h-5" />, stats: [{ label: "MOBILITY", value: 100 }, { label: "FLOW", value: 90 }], image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1200" }
+    { title: "Hypertrophy", fullTitle: "STRUCTURAL HYPERTROPHY", content: "Maximal muscle damage. Overloading fibers to force biological adaptation. We utilize eccentric overload and time-under-tension to rupture micro-fibers, demanding repair and growth.", index: "01", color: "#ff3333", icon: <Dumbbell className="w-5 h-5" />, stats: [{ label: "INTENSITY", value: 85 }, { label: "VOLUME", value: 90 }], image: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=1200" },
+    { title: "Neural Drive", fullTitle: "NEURAL POTENTIATION", content: "Rewiring the CNS. Moving heavy loads with maximal explosive intent. This phase focuses on recruiting high-threshold motor units to increase raw power output.", index: "02", color: "#33bbff", icon: <Zap className="w-5 h-5" />, stats: [{ label: "INTENSITY", value: 98 }, { label: "SPEED", value: 90 }], image: "https://images.unsplash.com/photo-1550345332-09e3ac987658?q=80&w=1200" },
+    { title: "Metabolic", fullTitle: "METABOLIC CAPACITY", content: "Pushing the lactate threshold. High-density work to strip fat and build engine. Short rest periods and compound movements create an oxygen debt that burns calories for hours.", index: "03", color: "#ffaa00", icon: <HeartPulse className="w-5 h-5" />, stats: [{ label: "VOLUME", value: 100 }, { label: "SWEAT", value: 100 }], image: "https://images.unsplash.com/photo-1517963879433-6ad2b056d712?q=80&w=1200" },
+    { title: "Restoration", fullTitle: "ACTIVE RESTORATION", content: "Joint mobilization and flow work to ensure structural integrity. We focus on end-range strength and fascia release to prevent injury and accelerate recovery.", index: "04", color: "#00ffaa", icon: <Timer className="w-5 h-5" />, stats: [{ label: "MOBILITY", value: 100 }, { label: "FLOW", value: 90 }], image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1200" }
   ], []);
 
   const slides = useMemo(() => [
-    { title: "THE FORGE", subtitle: "HEAVY METAL", img: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1600", description: "Raw iron. Calibrated plates. Monolifts.", specs: "ISO:400 // APERTURE: F/2.8" },
-    { title: "THE VOID", subtitle: "RECOVERY", img: "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?q=80&w=1600", description: "Zero-gravity sensory deprivation.", specs: "TEMP: -110°C // O2: 100%" },
-    { title: "THE ARENA", subtitle: "COMBAT", img: "https://images.unsplash.com/photo-1593079831268-3381b0db4a77?q=80&w=1600", description: "2000sqft of mat space. Heavy bags.", specs: "SURFACE: MATTE // GRIP: HIGH" },
-    { title: "THE LAB", subtitle: "BIOMETRICS", img: "https://images.unsplash.com/photo-1576678927484-cc907957088c?q=80&w=1600", description: "Advanced diagnostics. VO2 max testing.", specs: "ANALYSIS: REALTIME // CPU: 99%" }
+    { title: "THE FORGE", subtitle: "HEAVY METAL", img: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1600", description: "Raw iron. Calibrated plates. Monolifts. A sanctuary for heavy lifting where the only metric that matters is the weight on the bar.", specs: "ISO:400 // APERTURE: F/2.8" },
+    { title: "THE VOID", subtitle: "RECOVERY", img: "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?q=80&w=1600", description: "Zero-gravity sensory deprivation tanks. Infrared saunas. Cryotherapy chambers. Total system reset for optimal performance.", specs: "TEMP: -110°C // O2: 100%" },
+    { title: "THE ARENA", subtitle: "COMBAT", img: "https://images.unsplash.com/photo-1593079831268-3381b0db4a77?q=80&w=1600", description: "2000sqft of mat space. Heavy bags. Boxing rings. Where agility meets aggression in a controlled environment.", specs: "SURFACE: MATTE // GRIP: HIGH" },
+    { title: "THE LAB", subtitle: "BIOMETRICS", img: "https://images.unsplash.com/photo-1576678927484-cc907957088c?q=80&w=1600", description: "Advanced diagnostics. VO2 max testing. Blood panels. Data-driven training to bio-hack your physiology.", specs: "ANALYSIS: REALTIME // CPU: 99%" }
   ], []);
 
   return (
     <main ref={container} className="relative bg-black selection:bg-accent selection:text-black w-full overflow-x-hidden" onMouseMove={handleMouseMove}>
       
-      {/* GLOBAL NAVBAR (Now includes the Mobile Tag) */}
+      {/* GLOBAL NAVBAR */}
       <Navbar />
 
-      {/* GLOBAL FILM GRAIN */}
+      {/* GRAIN */}
       <div className="fixed inset-0 pointer-events-none z-[100] opacity-[0.03] mix-blend-overlay"
            style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}
       />
 
       {/* HERO SECTION */}
-      <section className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden bg-black">
+      <section id="hero" className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden bg-black">
         <div className="absolute inset-0 z-0 opacity-60">
            <video autoPlay muted loop playsInline className="w-full h-full object-cover grayscale contrast-125 brightness-75">
              <source src="/video-bg.mp4" type="video/mp4" />
            </video>
         </div>
-        
-        {/* FIX: SCALE DOWN CRYSTAL ON MOBILE */}
         <div className="absolute inset-0 z-10 opacity-80 pointer-events-none scale-[0.35] md:scale-100 origin-center">
           <FuturisticShape />
         </div>
-        
         <div className="relative z-20 flex flex-col items-center w-full px-4">
           <h1 className="font-syncopate text-[15vw] md:text-[18vw] font-black leading-[0.8] tracking-tighter text-white mix-blend-exclusion select-none text-center flex">
             {"KINETIC".split('').map((char, i) => <HoverLetter key={i} char={char} />)}
@@ -230,9 +241,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ... REST OF THE PAGE SECTIONS (UNCHANGED, THEY WERE GOOD) ... */}
-      
-      {/* For brevity, I'm cutting here, but ensure you include the Marquee, Method, Space, Membership, and Footer sections as defined in the previous response. The fix was mainly in the HERO CRYSTAL SCALING and NAVBAR. */}
       {/* TAPE 1 */}
       <div className="border-y border-white/10 bg-[#050505] py-4 md:py-8 overflow-hidden relative z-20">
         <ParallaxText baseVelocity={-2}>
@@ -244,24 +252,24 @@ export default function Home() {
               <Radio className="w-8 h-8 md:w-12 md:h-12" />
               <Activity className="w-8 h-8 md:w-12 md:h-12" />
               <Zap className="w-8 h-8 md:w-12 md:h-12" />
-              <Crosshair className="w-8 h-8 md:w-12 md:h-12" />
+              {/* Removed Crosshair as requested */}
            </div>
         </ParallaxText>
       </div>
 
-      <Philosophy />
+      <section id="philosophy">
+        <Philosophy />
+      </section>
       <Principles />
 
       {/* METHOD SECTION */}
       <section id="method" className="py-20 md:py-40 px-4 md:px-20 bg-[#080808] relative z-20 overflow-hidden">
-        {/* ... (Keep Method section code from previous response) ... */}
-        {/* Ensuring the methods stack on mobile */}
         <div className="absolute inset-0 pointer-events-none opacity-10 bg-[linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:40px_40px]" />
         <motion.div className="hidden md:block absolute w-[600px] h-[600px] bg-accent/5 rounded-full blur-[100px] pointer-events-none -translate-x-1/2 -translate-y-1/2 mix-blend-screen" style={{ left: mouseX, top: mouseY }} />
         
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="mb-16 md:mb-32 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/10 pb-8 md:pb-12 relative group">
-             {/* ... Header Content ... */}
+             <div className="absolute -left-2 -top-2 md:-left-4 md:-top-4 w-6 h-6 md:w-8 md:h-8 border-l-2 border-t-2 border-accent/50" />
              <div className="relative">
                 <div className="flex items-center gap-3 mb-2 md:mb-4">
                    <div className="w-2 h-2 bg-accent animate-pulse shadow-[0_0_15px_#CCFF00]" />
@@ -274,89 +282,119 @@ export default function Home() {
                    </h2>
                 </div>
              </div>
+             <div className="md:text-right font-mono text-[10px] md:text-xs text-white/40 max-w-xs leading-relaxed hidden md:block border-l-2 border-accent/20 pl-4">
+                <span className="text-accent">/// OPTIMIZATION_LOGIC</span><br/>Advanced protocols designed to force biological adaptation through mechanical tension.
+             </div>
           </div>
 
-          <div className="flex flex-col-reverse lg:grid lg:grid-cols-12 gap-8 lg:gap-16">
-            <div className="lg:col-span-4 flex flex-col justify-center gap-4">
+          {/* DESKTOP METHOD LAYOUT (Unchanged) */}
+          <div className="hidden md:grid grid-cols-12 gap-16">
+            <div className="col-span-4 flex flex-col justify-center gap-4">
               {protocols.map((protocol, i) => (
-                <div key={i} className="md:contents">
-                    <div className="block md:hidden">
-                        <div onClick={() => setActiveMethod(i)} className={`cursor-pointer p-6 border transition-all duration-300 ${activeMethod === i ? 'bg-white/5 border-white/20' : 'border-white/5 bg-black'}`}>
-                            <div className="flex justify-between items-center mb-2">
-                                <span className={`font-mono text-xs font-bold ${activeMethod === i ? 'text-accent' : 'text-white/20'}`}>0{i+1}</span>
-                                <div style={{ color: activeMethod === i ? protocol.color : 'white' }}>{protocol.icon}</div>
-                            </div>
-                            <h3 className={`font-syncopate text-lg uppercase font-bold ${activeMethod === i ? 'text-white' : 'text-white/60'}`}>{protocol.title}</h3>
-                        </div>
+                <Magnetic key={i}>
+                  <div onMouseEnter={() => setActiveMethod(i)} className={`group relative cursor-pointer p-6 border transition-all duration-300 ease-out ${activeMethod === i ? 'bg-white/5 border-white/20 translate-x-4' : 'border-white/5 hover:border-white/10 hover:bg-white/[0.02]'}`}>
+                    <div className="absolute left-0 top-0 bottom-0 w-1 transition-all duration-300" style={{ backgroundColor: activeMethod === i ? protocol.color : 'transparent', boxShadow: activeMethod === i ? `0 0 20px ${protocol.color}` : 'none' }} />
+                    <div className="flex justify-between items-center relative z-10">
+                      <div className="flex items-center gap-6">
+                         <span className={`font-mono text-sm font-bold transition-colors ${activeMethod === i ? 'text-white' : 'text-white/20'}`}>0{i+1}</span>
+                         <h3 className={`font-syncopate text-lg uppercase font-bold transition-colors ${activeMethod === i ? 'text-white' : 'text-white/40 group-hover:text-white/60'}`}>{protocol.title}</h3>
+                      </div>
+                      <div className={`transition-all duration-300 ${activeMethod === i ? 'opacity-100 scale-110' : 'opacity-0 scale-75'}`} style={{ color: activeMethod === i ? protocol.color : 'white' }}>{protocol.icon}</div>
                     </div>
-                    <div className="hidden md:block">
-                        <Magnetic>
-                            <div onMouseEnter={() => setActiveMethod(i)} className={`group relative cursor-pointer p-6 border transition-all duration-300 ease-out ${activeMethod === i ? 'bg-white/5 border-white/20 translate-x-4' : 'border-white/5 hover:border-white/10 hover:bg-white/[0.02]'}`}>
-                                <div className="absolute left-0 top-0 bottom-0 w-1 transition-all duration-300" style={{ backgroundColor: activeMethod === i ? protocol.color : 'transparent', boxShadow: activeMethod === i ? `0 0 20px ${protocol.color}` : 'none' }} />
-                                <div className="flex justify-between items-center relative z-10">
-                                <div className="flex items-center gap-6">
-                                    <span className={`font-mono text-sm font-bold transition-colors ${activeMethod === i ? 'text-white' : 'text-white/20'}`}>0{i+1}</span>
-                                    <h3 className={`font-syncopate text-lg uppercase font-bold transition-colors ${activeMethod === i ? 'text-white' : 'text-white/40 group-hover:text-white/60'}`}>{protocol.title}</h3>
-                                </div>
-                                <div className={`transition-all duration-300 ${activeMethod === i ? 'opacity-100 scale-110' : 'opacity-0 scale-75'}`} style={{ color: activeMethod === i ? protocol.color : 'white' }}>{protocol.icon}</div>
-                                </div>
-                            </div>
-                        </Magnetic>
-                    </div>
-                </div>
+                  </div>
+                </Magnetic>
               ))}
             </div>
-            {/* ... Image Container ... */}
-            <div className="lg:col-span-8 relative h-auto min-h-[400px] md:h-[600px] z-20">
-               <div className="w-full h-full bg-black border border-white/10 shadow-2xl overflow-hidden relative aspect-square md:aspect-auto">
+            <div className="col-span-8 relative h-[600px] z-20">
+               <div className="w-full h-full bg-black border border-white/10 shadow-2xl overflow-hidden relative">
                   <AnimatePresence mode='popLayout'>
                     <motion.img key={activeMethod} src={protocols[activeMethod].image} alt="Method" initial={{ opacity: 0, scale: 1.2 }} animate={{ opacity: 0.6, scale: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }} className="absolute inset-0 w-full h-full object-cover opacity-60 pointer-events-none" loading="lazy" />
                   </AnimatePresence>
                   <div className="absolute inset-0 mix-blend-multiply opacity-80 pointer-events-none transition-colors duration-500" style={{ background: `linear-gradient(135deg, black 0%, ${protocols[activeMethod].color} 100%)` }} />
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none" />
-                  <div className="absolute inset-0 z-10 p-6 md:p-12 flex flex-col justify-end">
-                      <div className="absolute top-6 right-6 md:top-10 md:right-10 flex items-center gap-3">
-                        <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: protocols[activeMethod].color }} />
-                        <BrutalLabel>SYSTEM_ARMED</BrutalLabel>
-                      </div>
-                      <div className="relative mb-6 md:mb-12">
-                        <div className="flex items-center gap-2 mb-4 md:mb-6 opacity-70">
+                  <div className="absolute inset-0 z-10 p-12 flex flex-col justify-end">
+                      <div className="relative mb-12">
+                        <div className="flex items-center gap-2 mb-6 opacity-70">
                             <Scan className="w-4 h-4" style={{ color: protocols[activeMethod].color }} />
-                            <span className="font-mono text-xs md:text-sm tracking-widest text-white uppercase font-bold">SEQ_0{protocols[activeMethod].index}</span>
+                            <span className="font-mono text-sm tracking-widest text-white uppercase font-bold">SEQ_0{protocols[activeMethod].index}</span>
                         </div>
-                        <h3 className="font-syncopate text-3xl md:text-7xl font-black text-white leading-[0.9] mb-4 md:mb-8 italic mix-blend-screen">{protocols[activeMethod].fullTitle}</h3>
-                        <div className="font-mono text-xs md:text-base text-white/80 leading-relaxed max-w-lg border-l-4 pl-4 md:pl-6 py-2 bg-black/40 backdrop-blur-sm" style={{ borderColor: protocols[activeMethod].color }}>{protocols[activeMethod].content}</div>
-                      </div>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8 border-t border-white/10 pt-4 md:pt-8">
-                        {protocols[activeMethod].stats.map((stat, idx) => (
-                            <div key={idx}>
-                              <div className="flex justify-between text-[10px] font-mono tracking-widest text-white/60 mb-2"><span>{stat.label}</span><span style={{ color: protocols[activeMethod].color }}>{stat.value}%</span></div>
-                              <div className="h-1 md:h-1.5 w-full bg-white/10 overflow-hidden rounded-full"><motion.div className="h-full" style={{ backgroundColor: protocols[activeMethod].color }} initial={{ width: 0 }} animate={{ width: `${stat.value}%` }} transition={{ duration: 0.8, ease: "circOut", delay: 0.1 * idx }}/></div>
-                            </div>
-                        ))}
+                        <h3 className="font-syncopate text-7xl font-black text-white leading-[0.9] mb-8 italic mix-blend-screen">{protocols[activeMethod].fullTitle}</h3>
+                        <div className="font-mono text-base text-white/80 leading-relaxed max-w-lg border-l-4 pl-6 py-2 bg-black/40 backdrop-blur-sm" style={{ borderColor: protocols[activeMethod].color }}>{protocols[activeMethod].content}</div>
                       </div>
                   </div>
                </div>
             </div>
           </div>
+
+          {/* MOBILE METHOD LAYOUT (Horizontal Album Scroll) */}
+          <div className="md:hidden">
+             {/* Navigation Arrows */}
+             <div className="flex justify-end gap-4 mb-4">
+                <button onClick={() => scrollMethods('left')} className="p-3 border border-white/10 bg-white/5 active:bg-white/20"><ArrowLeft className="w-4 h-4 text-white" /></button>
+                <button onClick={() => scrollMethods('right')} className="p-3 border border-white/10 bg-white/5 active:bg-white/20"><ArrowRight className="w-4 h-4 text-white" /></button>
+             </div>
+
+             {/* Scrollable Container */}
+             <div ref={methodScrollRef} className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-8 scrollbar-hide">
+                {protocols.map((protocol, i) => (
+                   <div key={i} className="min-w-[85vw] snap-center">
+                      <div className="bg-black border border-white/10 rounded-sm overflow-hidden h-[500px] relative flex flex-col">
+                         {/* Image Top Half */}
+                         <div className="h-1/2 relative overflow-hidden">
+                            <img src={protocol.image} alt={protocol.title} className="w-full h-full object-cover" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent" />
+                            <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm px-3 py-1 border border-white/10">
+                               <span className="font-mono text-[10px] text-white">0{i+1}</span>
+                            </div>
+                         </div>
+                         
+                         {/* Content Bottom Half */}
+                         <div className="h-1/2 p-6 flex flex-col justify-between relative bg-[#0a0a0a]">
+                            <div className="absolute top-0 left-0 h-[2px] w-full" style={{ backgroundColor: protocol.color }} />
+                            <div>
+                               <div className="flex items-center gap-2 mb-3 opacity-70">
+                                  <span style={{ color: protocol.color }}>{protocol.icon}</span>
+                                  <span className="font-mono text-[10px] tracking-widest text-white uppercase">SEQ_0{protocol.index}</span>
+                               </div>
+                               <h3 className="font-syncopate text-2xl font-black text-white leading-none mb-4">{protocol.title}</h3>
+                               {/* EXPANDED CONTENT for Mobile */}
+                               <p className="font-mono text-xs text-white/60 leading-relaxed line-clamp-4">
+                                  {protocol.content}
+                               </p>
+                            </div>
+                            
+                            {/* Stats */}
+                            <div className="flex gap-4 mt-4 pt-4 border-t border-white/5">
+                               {protocol.stats.map((stat, idx) => (
+                                  <div key={idx}>
+                                     <div className="text-[9px] font-mono text-white/40 mb-1">{stat.label}</div>
+                                     <div className="text-sm font-bold text-white">{stat.value}%</div>
+                                  </div>
+                               ))}
+                            </div>
+                         </div>
+                      </div>
+                   </div>
+                ))}
+             </div>
+          </div>
+
         </div>
       </section>
 
-      {/* SPACE & MEMBERSHIP (Already optimized in previous turns, included implicitly to complete file) */}
+      {/* SPACE SECTION (Vertical Stack for Mobile - Verified) */}
       <section ref={spaceSectionRef} id="space" className="min-h-screen bg-[#050505] relative z-20 flex flex-col md:flex-row overflow-hidden border-t border-white/5">
-         {/* ... (Vertical stack logic for mobile as previously defined) ... */}
-         {/* LEFT PANEL */}
+        <div className="absolute inset-0 pointer-events-none opacity-20 bg-[linear-gradient(rgba(204,255,0,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(204,255,0,0.05)_1px,transparent_1px)] bg-[size:60px_60px]" />
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-30 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay" />
         <div className="w-full md:w-1/2 h-auto md:h-full flex flex-col justify-center relative z-20 bg-[#050505] border-b md:border-b-0 md:border-r border-white/10 py-16 md:py-0 px-6 md:px-20">
            <div className="absolute top-6 right-6 md:top-12 md:right-12 text-right font-mono text-[9px] md:text-[10px] text-white/50 tracking-widest z-30 hidden md:block">COORDS: 34.05.{activeSlide}1 // 118.24.{9 - activeSlide}5<br/>SECTOR: 0{activeSlide}</div>
            <div className="relative">
-              <div className="absolute -top-3 left-0 md:left-9 flex flex-col gap-2 opacity-50 z-30"><Crosshair className="w-6 h-6 md:w-8 md:h-8 text-accent animate-[spin_3s_linear_infinite_reverse]" /></div>
               <div className="w-8 md:w-12 h-1 bg-accent mb-6 md:mb-8 shadow-[0_0_15px_rgba(204,255,0,0.5)]" />
               <span className="font-mono text-[10px] md:text-xs text-white/50 tracking-[0.5em] uppercase mb-4 block relative z-10">Architecture / Design</span>
               <h2 className="font-syncopate text-[12vw] md:text-[6vw] font-black leading-[0.8] tracking-tighter uppercase relative z-10" style={{ WebkitTextStroke: '2px #CCFF00', color: 'transparent' }}>THE SPACE</h2>
               <p className="mt-6 md:mt-8 font-mono text-xs md:text-sm text-white/60 max-w-md leading-loose relative z-10">A brutalist environment stripped of distraction. Concrete, steel, and light designed to focus the mind.</p>
            </div>
         </div>
-        {/* RIGHT PANEL */}
         <div className="w-full md:w-1/2 h-auto md:h-full overflow-hidden relative">
            <div ref={slidesRef} className="flex flex-col md:flex-row h-auto md:h-full w-full md:w-[400%] will-change-transform">
               {slides.map((slide, i) => (
@@ -381,9 +419,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* MEMBERSHIP */}
+      {/* MEMBERSHIP (Mobile Grid Fix) */}
       <section id="membership" className="py-20 md:py-40 px-4 md:px-20 bg-black relative z-20 overflow-hidden">
-        {/* ... (Membership card stack logic, preserved from previous) ... */}
         <div className="absolute inset-0 pointer-events-none opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/10 via-black to-black" />
         <div className="relative z-10 max-w-7xl mx-auto w-full">
           <div className="flex flex-col md:flex-row justify-between items-end mb-16 md:mb-24">
@@ -425,7 +462,6 @@ export default function Home() {
               return (
                 <SpotlightCard key={i} color={tier.color} className={isDimmed ? 'opacity-40 blur-sm scale-95' : ''}>
                   <div onMouseEnter={() => setHoveredCard(i)} className={`p-8 md:p-10 h-full flex flex-col relative transition-all duration-500`}>
-                    {/* ... Card Content ... */}
                     <div className="flex justify-between items-start mb-6 md:mb-8 relative z-10">
                       <div className={`p-3 rounded-full border border-white/10 bg-white/5 transition-colors duration-300 ${tier.popular ? 'text-black bg-accent border-accent' : 'text-white group-hover:text-black group-hover:bg-white group-hover:border-white'}`}>{tier.icon}</div>
                       {tier.popular && <span className="text-[10px] font-mono font-bold tracking-widest text-accent border border-accent px-2 py-1">POPULAR</span>}
