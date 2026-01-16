@@ -6,7 +6,7 @@ import "@fontsource/unifrakturmaguntia";
 import "@fontsource/jetbrains-mono";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
 import { CustomCursor } from "@/components/ui/CustomCursor";
-import { Navbar } from "@/components/layout/Navbar";
+import Navbar from "@/components/layout/Navbar";
 
 // Configure Syncopate
 const syncopate = Syncopate({
