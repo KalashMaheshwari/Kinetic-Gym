@@ -183,7 +183,7 @@ export default function Home() {
   // Mobile Scroll Handler for Methods
   const scrollMethods = (direction: 'left' | 'right') => {
     if (methodScrollRef.current) {
-      const scrollAmount = 300; // Approximate card width
+      const scrollAmount = 300; 
       methodScrollRef.current.scrollBy({
         left: direction === 'left' ? -scrollAmount : scrollAmount,
         behavior: 'smooth'
@@ -208,7 +208,6 @@ export default function Home() {
   return (
     <main ref={container} className="relative bg-black selection:bg-accent selection:text-black w-full overflow-x-hidden" onMouseMove={handleMouseMove}>
       
-      {/* GLOBAL NAVBAR */}
       <Navbar />
 
       {/* GRAIN */}
@@ -217,32 +216,76 @@ export default function Home() {
       />
 
       {/* HERO SECTION */}
-      <section id="hero" className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden bg-black">
-        <div className="absolute inset-0 z-0 opacity-60">
-           <video autoPlay muted loop playsInline className="w-full h-full object-cover grayscale contrast-125 brightness-75">
-             <source src="/video-bg.mp4" type="video/mp4" />
-           </video>
-        </div>
-        <div className="absolute inset-0 z-10 opacity-80 pointer-events-none scale-[0.35] md:scale-100 origin-center">
-          <FuturisticShape />
-        </div>
-        <div className="relative z-20 flex flex-col items-center w-full px-4">
-          <h1 className="font-syncopate text-[15vw] md:text-[18vw] font-black leading-[0.8] tracking-tighter text-white mix-blend-exclusion select-none text-center flex">
-            {"KINETIC".split('').map((char, i) => <HoverLetter key={i} char={char} />)}
-          </h1>
-          <div className="w-full max-w-[85vw] md:max-w-[42vw] mt-6 md:mt-8">
-            <div className="w-full h-[1px] md:h-[2px] bg-accent" />
-            <div className="flex justify-between items-center mt-4">
-              <BrutalLabel>EST. 2024</BrutalLabel>
-              <span className="text-accent tracking-widest text-xs">///</span>
-              <BrutalLabel>FUTURE</BrutalLabel>
+      <section id="hero" className="relative w-full bg-black overflow-hidden md:h-screen">
+
+        {/* =========================================
+            1. DESKTOP VIEW (UNCHANGED)
+           ========================================= */}
+        <div className="hidden md:flex absolute inset-0 flex-col items-center justify-center overflow-hidden">
+            <div className="absolute inset-0 z-0 opacity-60">
+               <video autoPlay muted loop playsInline className="w-full h-full object-cover grayscale contrast-125 brightness-75">
+                 <source src="/video-bg.mp4" type="video/mp4" />
+               </video>
             </div>
-          </div>
+            <div className="absolute inset-0 z-10 opacity-80 pointer-events-none scale-100 origin-center">
+              <FuturisticShape />
+            </div>
+            <div className="relative z-20 flex flex-col items-center w-full px-4">
+              <h1 className="font-syncopate text-[15vw] md:text-[18vw] font-black leading-[0.8] tracking-tighter text-white mix-blend-exclusion select-none text-center flex">
+                {"KINETIC".split('').map((char, i) => <HoverLetter key={i} char={char} />)}
+              </h1>
+              <div className="w-full max-w-[42vw] mt-8">
+                <div className="w-full h-[2px] bg-accent" />
+                <div className="flex justify-between items-center mt-4">
+                  <BrutalLabel>EST. 2024</BrutalLabel>
+                  <span className="text-accent tracking-widest text-xs">///</span>
+                  <BrutalLabel>FUTURE</BrutalLabel>
+                </div>
+              </div>
+            </div>
         </div>
+
+        {/* =========================================
+            2. MOBILE VIEW (TALLER & FRAMED)
+           ========================================= */}
+        <div className="block md:hidden relative w-full h-[60vh]">
+            {/* BACKGROUND IMAGE - Now fills the 60vh height explicitly */}
+            <img 
+              src="/mob-bg.jpg" 
+              alt="Background" 
+              className="w-full h-full object-cover grayscale contrast-125 brightness-[0.5]" 
+            />
+            
+            {/* OVERLAYS */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/60" />
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%] pointer-events-none opacity-50" />
+
+            {/* MOBILE CONTENT LAYER */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center px-4 z-20">
+               <div className="mb-6 px-3 py-1 border border-white/20 bg-black/40 backdrop-blur-md rounded-full flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-accent rounded-full animate-pulse" />
+                  <span className="font-mono text-[8px] text-accent/90 tracking-widest">SYSTEM_ONLINE // V.2.0</span>
+               </div>
+
+               <h1 className="font-syncopate text-[15vw] font-black leading-[0.8] tracking-tighter text-white select-none text-center flex drop-shadow-2xl">
+                 {"KINETIC".split('').map((char, i) => <HoverLetter key={i} char={char} />)}
+               </h1>
+
+               <div className="w-full max-w-[85vw] mt-6">
+                  <div className="w-full h-[1px] bg-accent shadow-[0_0_10px_#CCFF00]" />
+                  <div className="flex justify-between items-center mt-3">
+                    <BrutalLabel>EST. 2024</BrutalLabel>
+                    <span className="text-accent tracking-widest text-[10px] animate-pulse">///</span>
+                    <BrutalLabel>FUTURE</BrutalLabel>
+                  </div>
+               </div>
+            </div>
+        </div>
+
       </section>
 
       {/* TAPE 1 */}
-      <div className="border-y border-white/10 bg-[#050505] py-4 md:py-8 overflow-hidden relative z-20">
+      <div className="border-y border-white/10 bg-[#050505] py-2 md:py-8 overflow-hidden relative z-20">
         <ParallaxText baseVelocity={-2}>
            <div className="flex items-center gap-16 md:gap-24 opacity-50 text-white">
               <Scan className="w-8 h-8 md:w-12 md:h-12" />
@@ -252,7 +295,6 @@ export default function Home() {
               <Radio className="w-8 h-8 md:w-12 md:h-12" />
               <Activity className="w-8 h-8 md:w-12 md:h-12" />
               <Zap className="w-8 h-8 md:w-12 md:h-12" />
-              {/* Removed Crosshair as requested */}
            </div>
         </ParallaxText>
       </div>
@@ -419,23 +461,33 @@ export default function Home() {
         </div>
       </section>
 
-      {/* MEMBERSHIP (Mobile Grid Fix) */}
+{/* MEMBERSHIP */}
       <section id="membership" className="py-20 md:py-40 px-4 md:px-20 bg-black relative z-20 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/10 via-black to-black" />
         <div className="relative z-10 max-w-7xl mx-auto w-full">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-16 md:mb-24">
-            <div>
-              <BrutalLabel><Shield className="w-4 h-4" /> ACCESS_CONTROL</BrutalLabel>
-              <div className="relative mt-4">
-                <h2 className="text-[12vw] md:text-9xl font-black tracking-tighter font-syncopate relative z-10 leading-[0.85] select-none text-white">
+
+          {/* HEADER SECTION */}
+          <div className="flex flex-col md:flex-row justify-between items-start mb-16 md:mb-24">
+
+            {/* TEXT CONTAINER - Left aligned on Mobile and Desktop */}
+            <div className="w-full md:w-auto flex flex-col items-start mb-8 md:mb-0">
+              <div className="mb-2 md:mb-4">
+                 {/* Left aligned label */}
+                 <BrutalLabel><Shield className="w-4 h-4" /> ACCESS_CONTROL</BrutalLabel>
+              </div>
+              <div className="relative">
+                {/* REDUCED FONT SIZE: Changed text-5xl to text-4xl for mobile */}
+                {/* LEFT ALIGNMENT: Changed text-right md:text-left to text-left */}
+                <h2 className="text-4xl sm:text-7xl md:text-9xl font-black tracking-tighter font-syncopate relative z-10 leading-[0.85] select-none text-white text-left">
                     <DecryptedText text="MEMBERSHIP" speed={30} hollow={true} className="relative z-10" />
                     <span className="absolute inset-0 text-white opacity-0 mix-blend-overlay animate-[ping_3s_cubic-bezier(0,0,0.2,1)_infinite]">MEMBERSHIP</span>
                 </h2>
               </div>
             </div>
-            
-            <div className="flex items-center gap-2 mt-8 md:mt-0 p-1 border border-white/20 rounded-lg bg-white/5 backdrop-blur-sm relative self-start md:self-end">
-                <motion.div 
+
+            {/* BILLING TOGGLE */}
+            <div className="flex items-center gap-2 p-1 border border-white/20 rounded-lg bg-white/5 backdrop-blur-sm relative">
+                <motion.div
                   className="absolute top-1 bottom-1 bg-accent rounded-md z-0"
                   layoutId="billingCycle"
                   initial={false}
@@ -451,6 +503,7 @@ export default function Home() {
             </div>
           </div>
 
+          {/* CARDS GRID */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6" onMouseLeave={() => setHoveredCard(null)}>
             {[
               { name: 'Initiate', price: { m: '150', a: '120' }, features: ['Open Gym Access', 'Standard Locker', 'Digital App Access', '1 Guest Pass/Mo'], icon: <Scan className="w-6 h-6" />, color: 'rgba(255, 255, 255, 0.3)' },

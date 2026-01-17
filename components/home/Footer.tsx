@@ -19,7 +19,8 @@ const DigitalClock = () => {
   const pad = (n: number) => n.toString().padStart(2, '0');
 
   return (
-    <div className="flex items-center gap-3 font-mono text-xs text-white/40 tracking-widest py-4">
+    // Removed 'py-4' to tighten spacing further, added 'mb-2' instead in parent
+    <div className="flex items-center gap-3 font-mono text-xs text-white/40 tracking-widest">
         <span className="w-1.5 h-1.5 bg-accent rounded-full animate-pulse" />
         <span className="text-white">
             {pad(time.getHours())}:{pad(time.getMinutes())}:{pad(time.getSeconds())}
@@ -125,27 +126,26 @@ export default function Footer() {
               </ul>
            </div>
 
-           {/* COL 3: LEGAL */}
-           <div className="md:col-span-1">
+           {/* COL 3: LEGAL + COPYRIGHT + MOBILE CLOCK (Merged) */}
+           <div className="md:col-span-1 flex flex-col">
               <h4 className="font-mono text-xs text-accent mb-8 tracking-widest font-bold border-b border-white/10 pb-4">LEGAL_PROTOCOLS</h4>
-              <ul className="space-y-4 font-mono text-xs text-white/50">
+              <ul className="space-y-4 font-mono text-xs text-white/50 mb-12">
                  <li className="hover:text-white cursor-pointer flex items-center gap-2"><Shield className="w-3 h-3" /> PRIVACY_POLICY_V2</li>
                  <li className="hover:text-white cursor-pointer flex items-center gap-2"><Lock className="w-3 h-3" /> DATA_ENCRYPTION</li>
               </ul>
-              <div className="mt-12 font-mono text-[10px] text-white/30 leading-loose">COPYRIGHT 2024 © KINETIC<br/>ALL RIGHTS RESERVED.<br/>SYSTEM VERSION 2.0.4</div>
+
+              {/* CLOCK MOVED HERE FOR MOBILE */}
+              <div className="block md:hidden mb-4">
+                 <DigitalClock />
+              </div>
+
+              <div className="font-mono text-[10px] text-white/30 leading-loose">COPYRIGHT 2024 © KINETIC<br/>ALL RIGHTS RESERVED.<br/>SYSTEM VERSION 2.0.4</div>
            </div>
 
-           {/* COL 4: CLOCK (Hybrid) */}
-           <div className="md:col-span-1 flex flex-col items-center md:items-end justify-center py-8 md:py-0">
-              {/* Desktop View */}
-              <div className="hidden md:block">
+           {/* COL 4: DESKTOP CLOCK ONLY */}
+           {/* Added 'hidden md:flex' to prevent empty space on mobile */}
+           <div className="hidden md:flex md:col-span-1 flex-col items-center md:items-end justify-center">
                 <ModernClock />
-              </div>
-              
-              {/* Mobile View */}
-              <div className="block md:hidden">
-                <DigitalClock />
-              </div>
            </div>
         </div>
       </footer>
