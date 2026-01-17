@@ -1,154 +1,140 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
-import gsap from 'gsap';
-import { useGSAP } from '@gsap/react';
+import React, { useEffect, useState } from 'react';
+import { 
+  motion, 
+  useMotionValue, 
+  useVelocity, 
+  useTransform, 
+  useSpring, 
+  Variants 
+} from 'framer-motion';
 
-export const CustomCursor = () => {
-  const cursorRef = useRef<HTMLDivElement>(null); // The Main Arrow
-  const [isHovering, setIsHovering] = useState(false);
-  const [isClicking, setIsClicking] = useState(false);
-
-  // Performance tracking
-  const xTo = useRef<any>(null);
-  const yTo = useRef<any>(null);
+export default function Cursor() {
+  const [isVisible, setIsVisible] = useState(false);
+  const [cursorVariant, setCursorVariant] = useState('default');
   
-  // Velocity Physics
-  const previousPos = useRef({ x: 0, y: 0 });
+  // 1. Raw Inputs (Zero Latency)
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
 
-  useGSAP(() => {
-    // 1. Setup QuickTo for zero-latency movement
-    xTo.current = gsap.quickTo(cursorRef.current, "x", { duration: 0.05, ease: "power3.out" });
-    yTo.current = gsap.quickTo(cursorRef.current, "y", { duration: 0.05, ease: "power3.out" });
+  // 2. Velocity Tilt (Tight & Heavy)
+  const mouseVelocityX = useVelocity(mouseX);
+  // Range [-30, 30] degrees ensures it leans but doesn't spin
+  const rotateVal = useTransform(mouseVelocityX, [-2000, 2000], [-30, 30], { clamp: true });
+  const smoothRotate = useSpring(rotateVal, { damping: 50, stiffness: 400 });
 
-    // 2. Mouse Move Logic
-    const onMouseMove = (e: MouseEvent) => {
-      const { clientX, clientY } = e;
-
-      // Calculate Velocity for the Tilt Effect
-      const dx = clientX - previousPos.current.x;
-      
-      // Clamp the rotation (max 25 degrees tilt)
-      const rotation = gsap.utils.clamp(-25, 25, dx * 1.5);
-
-      // Move Cursor
-      xTo.current(clientX);
-      yTo.current(clientY);
-
-      // Apply Velocity Tilt
-      gsap.to(cursorRef.current, {
-        rotation: rotation,
-        duration: 0.4,
-        ease: "power2.out",
-        overwrite: 'auto'
-      });
-
-      previousPos.current = { x: clientX, y: clientY };
+  useEffect(() => {
+    const moveCursor = (e: MouseEvent) => {
+      if (!isVisible) setIsVisible(true);
+      mouseX.set(e.clientX);
+      mouseY.set(e.clientY);
     };
 
-    // 3. Hover Detection
-    const onMouseOver = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      const clickable = target.tagName === 'A' || 
-                        target.tagName === 'BUTTON' || 
-                        target.tagName === 'INPUT' || 
-                        target.closest('a') || 
-                        target.closest('button') ||
-                        target.classList.contains('cursor-pointer');
-      setIsHovering(!!clickable);
-    };
+    const handleMouseEnter = () => setCursorVariant('hover');
+    const handleMouseLeave = () => setCursorVariant('default');
+    const handleTextEnter = () => setCursorVariant('text');
+    const handleTextLeave = () => setCursorVariant('default');
 
-    const onMouseDown = () => setIsClicking(true);
-    const onMouseUp = () => setIsClicking(false);
+    window.addEventListener('mousemove', moveCursor);
 
-    window.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseover', onMouseOver, { passive: true });
-    window.addEventListener('mousedown', onMouseDown);
-    window.addEventListener('mouseup', onMouseUp);
+    const clickableElements = document.querySelectorAll('a, button, .interactive');
+    clickableElements.forEach((el) => {
+      el.addEventListener('mouseenter', handleMouseEnter);
+      el.addEventListener('mouseleave', handleMouseLeave);
+    });
+
+    const textElements = document.querySelectorAll('p, h1, h2, h3, h4, h5, h6, span');
+    textElements.forEach((el) => {
+        if (!el.closest('a') && !el.closest('button')) {
+            el.addEventListener('mouseenter', handleTextEnter);
+            el.addEventListener('mouseleave', handleTextLeave);
+        }
+    });
 
     return () => {
-      window.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseover', onMouseOver);
-      window.removeEventListener('mousedown', onMouseDown);
-      window.removeEventListener('mouseup', onMouseUp);
+      window.removeEventListener('mousemove', moveCursor);
+      clickableElements.forEach((el) => {
+        el.removeEventListener('mouseenter', handleMouseEnter);
+        el.removeEventListener('mouseleave', handleMouseLeave);
+      });
+      textElements.forEach((el) => {
+          el.removeEventListener('mouseenter', handleTextEnter);
+          el.removeEventListener('mouseleave', handleTextLeave);
+      });
     };
-  }, []);
+  }, [isVisible, mouseX, mouseY]);
 
-  // 4. Animation States (Hover/Click)
-  useEffect(() => {
-    const cursor = cursorRef.current;
-    if (!cursor) return;
-
-    if (isClicking) {
-        // Click: Snap smaller, turn solid Lime
-        gsap.to(cursor, { 
-            scale: 0.8, 
-            duration: 0.1, 
-            ease: "power2.out" 
-        });
-        // Flash color via SVG fill
-        gsap.to(cursor.querySelector('path'), { fill: 'rgba(204, 255, 0, 0.6)', duration: 0.1 });
-
-    } else if (isHovering) {
-        // Hover: Scale up slightly, stickier feel
-        gsap.to(cursor, { 
-            scale: 1.2, 
-            duration: 0.3, 
-            ease: "back.out(1.7)" 
-        });
-        gsap.to(cursor.querySelector('path'), { fill: 'rgba(255, 255, 255, 0.1)', duration: 0.3 });
-
-    } else {
-        // Idle: Standard Dark Frost
-        gsap.to(cursor, { 
-            scale: 1, 
-            duration: 0.3, 
-            ease: "power2.out" 
-        });
-        gsap.to(cursor.querySelector('path'), { fill: 'rgba(10, 10, 10, 0.4)', duration: 0.3 });
+  const variants: Variants = {
+    default: {
+      scale: 1,
+      opacity: 1,
+      x: 0,
+      y: 0,
+    },
+    hover: {
+      scale: 1.2,
+      opacity: 1,
+      x: 0,
+      y: 0,
+    },
+    text: {
+      scale: 0.8,
+      opacity: 1,
+      x: 0,
+      y: 0,
     }
-  }, [isHovering, isClicking]);
+  };
 
   return (
     <>
       <style jsx global>{`
-        @media (min-width: 768px) {
-          body, a, button, input { cursor: none !important; }
+        body, a, button, input, textarea {
+          cursor: none !important;
         }
       `}</style>
 
-      {/* Container - Hidden on mobile */}
-      <div className="hidden md:block fixed inset-0 pointer-events-none z-[9999] overflow-visible">
-        
-        {/* THE CURSOR */}
-        <div 
-            ref={cursorRef}
-            className="fixed top-0 left-0 will-change-transform drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)]"
-            style={{ 
-                width: '24px',
-                height: '24px',
-                transform: 'translate(-20%, -20%)', // Align tip
-                transformOrigin: '20% 20%', // Pivot around the tip
-            }}
-        >
-            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" className="overflow-visible">
-                {/* THE SHAPE:
-                   Dark translucent fill + Lime Border 
-                */}
+      <motion.div
+        className="fixed top-0 left-0 z-[99999] pointer-events-none will-change-transform"
+        style={{ 
+          x: mouseX, 
+          y: mouseY,
+          rotate: smoothRotate,
+          opacity: isVisible ? 1 : 0 
+        }}
+        variants={variants}
+        animate={cursorVariant}
+      >
+        <div className="relative w-8 h-8 drop-shadow-[0_4px_6px_rgba(0,0,0,0.5)]">
+            
+            {/* LAYER 1: THE FROST (Blurry Inside) */}
+            {/* We use clip-path to match the svg arrow shape exactly so the square div doesn't show */}
+            <div 
+                className="absolute inset-0 bg-black/40 backdrop-blur-[3px]"
+                style={{
+                    clipPath: "polygon(12.5% 12.5%, 42.1% 87.5%, 54.6% 54.6%, 87.5% 42.1%)"
+                }}
+            />
+
+            {/* LAYER 2: THE ARMOR (Stroke) */}
+            <svg 
+                width="100%" 
+                height="100%" 
+                viewBox="0 0 32 32" 
+                fill="none" 
+                xmlns="http://www.w3.org/2000/svg"
+                className="relative z-10"
+            >
                 <path 
-                    d="M2 2L20 8L12 12L8 20L2 2Z" 
-                    fill="rgba(10, 10, 10, 0.4)" 
-                    stroke="#CCFF00" 
-                    strokeWidth="1.5"
+                    d="M4 4L13.5 28L17.5 17.5L28 13.5L4 4Z" 
+                    fill="none" 
+                    stroke="#99cc00" 
+                    strokeWidth="1.5" 
                     strokeLinejoin="round"
-                    style={{
-                        backdropFilter: 'blur(4px)', // Optional browser support
-                    }}
                 />
             </svg>
         </div>
-
-      </div>
+      </motion.div>
     </>
   );
-};
+}

@@ -158,13 +158,13 @@ export default function Home() {
     mouseY.set(clientY);
   };
 
-  // --- SMOOTH SCROLL (LENIS) SETUP ---
+// --- SMOOTH SCROLL (LENIS) SETUP ---
   useEffect(() => {
     const lenis = new Lenis({
         duration: 1.2,
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // "Luxury" Easing
         orientation: 'vertical',
-        gestureDirection: 'vertical',
+        // gestureDirection: 'vertical', <--- REMOVE THIS LINE
         smoothWheel: true,
         touchMultiplier: 2,
     });
@@ -175,10 +175,6 @@ export default function Home() {
     }
 
     requestAnimationFrame(raf);
-
-    // GSAP Integration with Lenis
-    // This connects GSAP's scroll trigger to Lenis's smooth update
-    // Note: ScrollTrigger.update() usually handled automatically but good to sync
     
     return () => {
         lenis.destroy();
