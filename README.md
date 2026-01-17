@@ -10,7 +10,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
-[**🚀 VIEW LIVE DEPLOYMENT**](https://your-project-name.vercel.app)
+[**🚀 VIEW LIVE DEPLOYMENT**]((https://kineticgym.netlify.app/))
 
 </div>
 
