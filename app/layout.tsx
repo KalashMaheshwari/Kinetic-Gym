@@ -27,8 +27,12 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "KINETIC | The Anti-Gym",
-  description: "Engineered movement for the 1%.",
+  title: 'KINETIC | The Anti-Gym',
+  description: 'A brutalist, high-performance training facility designed for biological optimization.',
+  icons: {
+    icon: '/icon.png', // Make sure you actually have a favicon!
+  },
+  themeColor: '#CCFF00',
 };
 
 export default function RootLayout({

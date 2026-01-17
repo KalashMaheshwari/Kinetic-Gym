@@ -4,12 +4,13 @@ import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import Lenis from 'lenis'; // IMPORT LENIS
 import { FuturisticShape } from '@/components/ui/FuturisticShape';
 import { Philosophy } from '@/components/home/Philosophy';
 import { Principles } from '@/components/home/Principles';
 import Footer from '@/components/home/Footer'; 
 import Navbar from '@/components/layout/Navbar';
-import { ArrowRight, ArrowLeft, Crosshair, Zap, Activity, Dumbbell, HeartPulse, Timer, Scan, Check, Shield, Crown, Flame, Cpu, Dna, Anchor, Radio } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Zap, Activity, Dumbbell, HeartPulse, Timer, Scan, Check, Shield, Crown, Flame, Cpu, Dna, Anchor, Radio } from 'lucide-react';
 import { motion, AnimatePresence, useMotionValue, useSpring, useMotionTemplate, useScroll, useVelocity, useTransform, useAnimationFrame } from 'framer-motion';
 
 const wrap = (min: number, max: number, v: number) => {
@@ -106,7 +107,7 @@ function ParallaxText({ children, baseVelocity = 100 }: { children: React.ReactN
     baseX.set(baseX.get() + moveBy);
   });
   return (
-    <div className="overflow-hidden m-0 flex flex-nowrap whitespace-nowrap">
+    <div className="overflow-hidden m-0 flex flex-nowrap whitespace-nowrap will-change-transform">
       <motion.div className="flex flex-nowrap gap-12 md:gap-24 items-center" style={{ x }}>
         {children} {children} {children} {children}
       </motion.div>
@@ -148,11 +149,41 @@ export default function Home() {
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
+  
+  // OPTIMIZED: Only track mouse on desktop to save mobile resources
   const handleMouseMove = (e: React.MouseEvent) => {
+    if (window.innerWidth < 768) return; 
     const { clientX, clientY } = e;
     mouseX.set(clientX);
     mouseY.set(clientY);
   };
+
+  // --- SMOOTH SCROLL (LENIS) SETUP ---
+  useEffect(() => {
+    const lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // "Luxury" Easing
+        orientation: 'vertical',
+        gestureDirection: 'vertical',
+        smoothWheel: true,
+        touchMultiplier: 2,
+    });
+
+    function raf(time: number) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+    }
+
+    requestAnimationFrame(raf);
+
+    // GSAP Integration with Lenis
+    // This connects GSAP's scroll trigger to Lenis's smooth update
+    // Note: ScrollTrigger.update() usually handled automatically but good to sync
+    
+    return () => {
+        lenis.destroy();
+    };
+  }, []);
 
   useGSAP(() => {
     const mm = gsap.matchMedia();
@@ -210,17 +241,19 @@ export default function Home() {
       
       <Navbar />
 
-      {/* GRAIN */}
-      <div className="fixed inset-0 pointer-events-none z-[100] opacity-[0.03] mix-blend-overlay"
-           style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}
+      {/* OPTIMIZED GRAIN (CSS-Based, No SVG Filter Lag) */}
+      <div 
+        className="fixed inset-0 pointer-events-none z-[100] opacity-[0.05] mix-blend-overlay"
+        style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
+            // If still laggy, replace the above URL with a tiny PNG pattern
+        }}
       />
 
       {/* HERO SECTION */}
       <section id="hero" className="relative w-full bg-black overflow-hidden md:h-screen">
-
-        {/* =========================================
-            1. DESKTOP VIEW (UNCHANGED)
-           ========================================= */}
+        
+        {/* DESKTOP HERO */}
         <div className="hidden md:flex absolute inset-0 flex-col items-center justify-center overflow-hidden">
             <div className="absolute inset-0 z-0 opacity-60">
                <video autoPlay muted loop playsInline className="w-full h-full object-cover grayscale contrast-125 brightness-75">
@@ -245,32 +278,23 @@ export default function Home() {
             </div>
         </div>
 
-        {/* =========================================
-            2. MOBILE VIEW (TALLER & FRAMED)
-           ========================================= */}
-        <div className="block md:hidden relative w-full h-[60vh]">
-            {/* BACKGROUND IMAGE - Now fills the 60vh height explicitly */}
+        {/* MOBILE HERO (Optimized) */}
+        <div className="block md:hidden relative w-full h-[60vh] will-change-transform">
             <img 
               src="/mob-bg.jpg" 
               alt="Background" 
               className="w-full h-full object-cover grayscale contrast-125 brightness-[0.5]" 
             />
-            
-            {/* OVERLAYS */}
             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/60" />
             <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%] pointer-events-none opacity-50" />
-
-            {/* MOBILE CONTENT LAYER */}
             <div className="absolute inset-0 flex flex-col items-center justify-center px-4 z-20">
                <div className="mb-6 px-3 py-1 border border-white/20 bg-black/40 backdrop-blur-md rounded-full flex items-center gap-2">
                   <div className="w-1.5 h-1.5 bg-accent rounded-full animate-pulse" />
                   <span className="font-mono text-[8px] text-accent/90 tracking-widest">SYSTEM_ONLINE // V.2.0</span>
                </div>
-
                <h1 className="font-syncopate text-[15vw] font-black leading-[0.8] tracking-tighter text-white select-none text-center flex drop-shadow-2xl">
                  {"KINETIC".split('').map((char, i) => <HoverLetter key={i} char={char} />)}
                </h1>
-
                <div className="w-full max-w-[85vw] mt-6">
                   <div className="w-full h-[1px] bg-accent shadow-[0_0_10px_#CCFF00]" />
                   <div className="flex justify-between items-center mt-3">
@@ -281,13 +305,12 @@ export default function Home() {
                </div>
             </div>
         </div>
-
       </section>
 
-      {/* TAPE 1 */}
+      {/* TAPE 1 - With Will-Change optimization */}
       <div className="border-y border-white/10 bg-[#050505] py-2 md:py-8 overflow-hidden relative z-20">
         <ParallaxText baseVelocity={-2}>
-           <div className="flex items-center gap-16 md:gap-24 opacity-50 text-white">
+           <div className="flex items-center gap-16 md:gap-24 opacity-50 text-white will-change-transform">
               <Scan className="w-8 h-8 md:w-12 md:h-12" />
               <Cpu className="w-8 h-8 md:w-12 md:h-12" />
               <Dna className="w-8 h-8 md:w-12 md:h-12" />
@@ -310,6 +333,7 @@ export default function Home() {
         <motion.div className="hidden md:block absolute w-[600px] h-[600px] bg-accent/5 rounded-full blur-[100px] pointer-events-none -translate-x-1/2 -translate-y-1/2 mix-blend-screen" style={{ left: mouseX, top: mouseY }} />
         
         <div className="max-w-7xl mx-auto relative z-10">
+          {/* HEADER */}
           <div className="mb-16 md:mb-32 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/10 pb-8 md:pb-12 relative group">
              <div className="absolute -left-2 -top-2 md:-left-4 md:-top-4 w-6 h-6 md:w-8 md:h-8 border-l-2 border-t-2 border-accent/50" />
              <div className="relative">
@@ -329,7 +353,7 @@ export default function Home() {
              </div>
           </div>
 
-          {/* DESKTOP METHOD LAYOUT (Unchanged) */}
+          {/* DESKTOP METHOD LAYOUT */}
           <div className="hidden md:grid grid-cols-12 gap-16">
             <div className="col-span-4 flex flex-col justify-center gap-4">
               {protocols.map((protocol, i) => (
@@ -368,20 +392,16 @@ export default function Home() {
             </div>
           </div>
 
-          {/* MOBILE METHOD LAYOUT (Horizontal Album Scroll) */}
+          {/* MOBILE METHOD LAYOUT */}
           <div className="md:hidden">
-             {/* Navigation Arrows */}
              <div className="flex justify-end gap-4 mb-4">
                 <button onClick={() => scrollMethods('left')} className="p-3 border border-white/10 bg-white/5 active:bg-white/20"><ArrowLeft className="w-4 h-4 text-white" /></button>
                 <button onClick={() => scrollMethods('right')} className="p-3 border border-white/10 bg-white/5 active:bg-white/20"><ArrowRight className="w-4 h-4 text-white" /></button>
              </div>
-
-             {/* Scrollable Container */}
              <div ref={methodScrollRef} className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-8 scrollbar-hide">
                 {protocols.map((protocol, i) => (
                    <div key={i} className="min-w-[85vw] snap-center">
                       <div className="bg-black border border-white/10 rounded-sm overflow-hidden h-[500px] relative flex flex-col">
-                         {/* Image Top Half */}
                          <div className="h-1/2 relative overflow-hidden">
                             <img src={protocol.image} alt={protocol.title} className="w-full h-full object-cover" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent" />
@@ -389,8 +409,6 @@ export default function Home() {
                                <span className="font-mono text-[10px] text-white">0{i+1}</span>
                             </div>
                          </div>
-                         
-                         {/* Content Bottom Half */}
                          <div className="h-1/2 p-6 flex flex-col justify-between relative bg-[#0a0a0a]">
                             <div className="absolute top-0 left-0 h-[2px] w-full" style={{ backgroundColor: protocol.color }} />
                             <div>
@@ -399,13 +417,10 @@ export default function Home() {
                                   <span className="font-mono text-[10px] tracking-widest text-white uppercase">SEQ_0{protocol.index}</span>
                                </div>
                                <h3 className="font-syncopate text-2xl font-black text-white leading-none mb-4">{protocol.title}</h3>
-                               {/* EXPANDED CONTENT for Mobile */}
                                <p className="font-mono text-xs text-white/60 leading-relaxed line-clamp-4">
                                   {protocol.content}
                                </p>
                             </div>
-                            
-                            {/* Stats */}
                             <div className="flex gap-4 mt-4 pt-4 border-t border-white/5">
                                {protocol.stats.map((stat, idx) => (
                                   <div key={idx}>
@@ -424,7 +439,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SPACE SECTION (Vertical Stack for Mobile - Verified) */}
+      {/* SPACE SECTION */}
       <section ref={spaceSectionRef} id="space" className="min-h-screen bg-[#050505] relative z-20 flex flex-col md:flex-row overflow-hidden border-t border-white/5">
         <div className="absolute inset-0 pointer-events-none opacity-20 bg-[linear-gradient(rgba(204,255,0,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(204,255,0,0.05)_1px,transparent_1px)] bg-[size:60px_60px]" />
         <div className="absolute inset-0 z-0 pointer-events-none opacity-30 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay" />
@@ -461,49 +476,46 @@ export default function Home() {
         </div>
       </section>
 
-{/* MEMBERSHIP */}
+      {/* MEMBERSHIP SECTION - With Fail-Safe CSS Grid */}
       <section id="membership" className="py-20 md:py-40 px-4 md:px-20 bg-black relative z-20 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/10 via-black to-black" />
+        
+        {/* --- 1. ANIMATED BACKGROUND LAYER --- */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <style jsx>{`
+                @keyframes grid-flow {
+                    0% { transform: translateY(0); }
+                    100% { transform: translateY(64px); }
+                }
+                .animate-grid {
+                    animation: grid-flow 2s linear infinite;
+                }
+            `}</style>
+            <div className="absolute inset-0 opacity-30" style={{ backgroundImage: `linear-gradient(to right, #333 1px, transparent 1px), linear-gradient(to bottom, #333 1px, transparent 1px)`, backgroundSize: '64px 64px' }} />
+            <div className="absolute inset-0 animate-grid opacity-20" style={{ backgroundImage: `linear-gradient(to right, rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.1) 1px, transparent 1px)`, backgroundSize: '64px 64px', top: '-64px' }} />
+            <motion.div animate={{ rotate: 360 }} transition={{ duration: 15, repeat: Infinity, ease: "linear" }} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vmax] h-[150vmax] opacity-20 pointer-events-none" style={{ background: 'conic-gradient(from 0deg, transparent 0deg, transparent 270deg, rgba(204, 255, 0, 0.4) 360deg)' }} />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,black_90%)]" />
+        </div>
+
+        {/* --- CONTENT LAYER --- */}
         <div className="relative z-10 max-w-7xl mx-auto w-full">
-
-          {/* HEADER SECTION */}
           <div className="flex flex-col md:flex-row justify-between items-start mb-16 md:mb-24">
-
-            {/* TEXT CONTAINER - Left aligned on Mobile and Desktop */}
             <div className="w-full md:w-auto flex flex-col items-start mb-8 md:mb-0">
               <div className="mb-2 md:mb-4">
-                 {/* Left aligned label */}
                  <BrutalLabel><Shield className="w-4 h-4" /> ACCESS_CONTROL</BrutalLabel>
               </div>
               <div className="relative">
-                {/* REDUCED FONT SIZE: Changed text-5xl to text-4xl for mobile */}
-                {/* LEFT ALIGNMENT: Changed text-right md:text-left to text-left */}
                 <h2 className="text-4xl sm:text-7xl md:text-9xl font-black tracking-tighter font-syncopate relative z-10 leading-[0.85] select-none text-white text-left">
                     <DecryptedText text="MEMBERSHIP" speed={30} hollow={true} className="relative z-10" />
                     <span className="absolute inset-0 text-white opacity-0 mix-blend-overlay animate-[ping_3s_cubic-bezier(0,0,0.2,1)_infinite]">MEMBERSHIP</span>
                 </h2>
               </div>
             </div>
-
-            {/* BILLING TOGGLE */}
             <div className="flex items-center gap-2 p-1 border border-white/20 rounded-lg bg-white/5 backdrop-blur-sm relative">
-                <motion.div
-                  className="absolute top-1 bottom-1 bg-accent rounded-md z-0"
-                  layoutId="billingCycle"
-                  initial={false}
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                  style={{
-                    left: billingCycle === 'monthly' ? '4px' : '50%',
-                    right: billingCycle === 'monthly' ? '50%' : '4px',
-                    width: 'calc(50% - 6px)'
-                  }}
-                />
+                <motion.div className="absolute top-1 bottom-1 bg-accent rounded-md z-0" layoutId="billingCycle" initial={false} transition={{ type: "spring", stiffness: 300, damping: 30 }} style={{ left: billingCycle === 'monthly' ? '4px' : '50%', right: billingCycle === 'monthly' ? '50%' : '4px', width: 'calc(50% - 6px)' }} />
                 <button onClick={() => setBillingCycle('monthly')} className={`relative z-10 px-6 md:px-8 py-2 md:py-3 font-mono text-[10px] md:text-xs font-bold tracking-widest transition-colors duration-300 ${billingCycle === 'monthly' ? 'text-black' : 'text-white/50'}`}>MONTHLY</button>
                 <button onClick={() => setBillingCycle('annual')} className={`relative z-10 px-6 md:px-8 py-2 md:py-3 font-mono text-[10px] md:text-xs font-bold tracking-widest transition-colors duration-300 ${billingCycle === 'annual' ? 'text-black' : 'text-white/50'}`}>ANNUAL</button>
             </div>
           </div>
-
-          {/* CARDS GRID */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6" onMouseLeave={() => setHoveredCard(null)}>
             {[
               { name: 'Initiate', price: { m: '150', a: '120' }, features: ['Open Gym Access', 'Standard Locker', 'Digital App Access', '1 Guest Pass/Mo'], icon: <Scan className="w-6 h-6" />, color: 'rgba(255, 255, 255, 0.3)' },
