@@ -1,33 +1,66 @@
-# KINETIC // High-Performance Gym Interface
+# KINETIC // FUTURE OF HUMAN PERFORMANCE
 
-![Project Banner](public/mob-bg.jpg) 
-*(Replace this path with a screenshot of your actual desktop hero section if available)*
+![Project Banner](public/mob-bg.jpg)
+![preview](public/Preview.jpg)
 
-**KINETIC** is a brutalist, futuristic landing page designed to embody high-performance training. Built with **Next.js 14**, it features a zero-latency custom cursor, complex GSAP animations, and a fully responsive "Cyber-Latch" navigation system.
+<div align="center">
 
-## ⚡ Features
+[![Vercel App](https://img.shields.io/badge/Vercel-Deployed-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://your-project-name.vercel.app)
+[![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
-* **Hybrid Hero Architecture:** * **Desktop:** 3D Crystal artifact with video background and heavy post-processing.
-    * **Mobile:** High-performance static imagery with cyber-scan overlays and HUD elements.
-* **Tactical Navigation:** Custom "Aerogel" frosted glass mobile menu with magnetic pull and latch physics.
-* **Physics-Based Cursor:** Custom WebGL-style cursor with velocity tilt and magnetic sticking.
-* **GSAP & Framer Motion:** Heavy usage of `ScrollTrigger` for parallax effects and `AnimatePresence` for smooth UI transitions.
-* **Brutalist Design System:** Monospaced typography, heavy contrast, neon accents (`#CCFF00`), and raw grid layouts.
+[**🚀 VIEW LIVE DEPLOYMENT**](https://your-project-name.vercel.app)
 
-## 🛠️ Tech Stack
+</div>
 
-* **Framework:** [Next.js 14](https://nextjs.org/) (App Router)
-* **Language:** [TypeScript](https://www.typescriptlang.org/)
-* **Styling:** [Tailwind CSS](https://tailwindcss.com/)
-* **Animation:** * [GSAP](https://gsap.com/) (ScrollTrigger)
-    * [Framer Motion](https://www.framer.com/motion/) (Micro-interactions)
-* **Icons:** [Lucide React](https://lucide.dev/)
+---
+
+## ⚡ System Overview
+
+**KINETIC** is a brutalist, high-performance web interface designed for a luxury athletic facility. The site embodies the concept of "biological optimization" through a strict design system of raw data, neon accents (`#CCFF00`), and industrial typography.
+
+Unlike standard landing pages, KINETIC treats the DOM as a HUD (Heads-Up Display), utilizing physics-based interactions and zero-latency animations to create an immersive "Tactical OS" feel.
+
+## 🛠️ Tech Stack & Architecture
+
+* **Core:** Next.js 14 (App Router), React, TypeScript.
+* **Styling:** Tailwind CSS, Custom Utility Classes.
+* **Animation Engine:**
+    * **GSAP (ScrollTrigger):** For complex timeline-based scroll effects (Horizontal Scroll, Parallax).
+    * **Framer Motion:** For spring physics, micro-interactions, and magnetic elements.
+    * **Lenis:** For normalized, luxury-grade smooth scrolling.
+* **Performance:**
+    * CSS-based static noise (replacing heavy SVG turbulence filters).
+    * `will-change` optimization for GPU layering.
+    * Dynamic imports and component lazy loading.
+
+## 🌟 Key Features
+
+### 1. The "Tactical" Cursor
+A custom SVG pointer that replaces the default OS cursor.
+* **Velocity Tilt:** The cursor leans into the direction of movement based on mouse velocity (clamped to +/- 12 degrees).
+* **Aerogel Visor:** Features a semi-transparent, frosted interior using CSS clipping and backdrop filters.
+* **State Awareness:** Reacts to text, interactive elements, and magnetic fields.
+
+### 2. "Aerogel" Navigation System
+* **Desktop:** A floating glass-morphism dock with "Scramble Text" decryption effects on hover.
+* **Mobile:** A slide-out "Cyber-Latch" menu with heavy blur, spring-loaded animations, and sound-reactive visuals.
+
+### 3. Magnetic Liquid UI
+The "JOIN NOW" CTA features a custom magnetic physics engine.
+* **Liquid Fill:** The button fill tracks the cursor position *inside* the element boundaries.
+* **Border Sync:** The border moves in perfect unison with the fill, creating a cohesive physical object.
+
+### 4. Hybrid Hero Section
+* **Desktop:** Renders a high-bitrate video background with a 3D "Artifact" overlay.
+* **Mobile:** Automatically swaps to a static, high-performance image with "System Boot" overlays to save battery and data.
 
 ## 🚀 Getting Started
 
 1.  **Clone the repository:**
     ```bash
-    git clone [https://github.com/your-username/kinetic-gym.git](https://github.com/your-username/kinetic-gym.git)
+    git clone [https://github.com/KalashMaheshwari/kinetic-gym.git](https://github.com/KalashMaheshwari/kinetic-gym.git)
     cd kinetic-gym
     ```
 
@@ -43,15 +76,20 @@
     npm run dev
     ```
 
-4.  **Open the local server:**
-    Visit `http://localhost:3000` to view the system.
+4.  **Build for production:**
+    ```bash
+    npm run build
+    ```
 
 ## 📂 Project Structure
 
 ```bash
+├── app/
+│   ├── globals.css        # Global styles & Lenis CSS
+│   ├── layout.tsx         # Root layout (Fonts, Navbar, Cursor)
+│   └── page.tsx           # Main Single Page Application
 ├── components/
-│   ├── home/          # Section-specific components (Hero, Method, Membership)
-│   ├── layout/        # Navbar, Footer
-│   └── ui/            # Reusable primitives (Cursor, Magnetic Buttons, Marquee)
-├── public/            # Static assets (video-bg.mp4, mob-bg.jpg)
-└── app/               # Next.js App Router pages
+│   ├── home/              # Section-specific views (Philosophy, Method, etc.)
+│   ├── layout/            # Navbar, Footer
+│   └── ui/                # Reusable atoms (Cursor, Magnetic Buttons)
+└── public/                # Static assets
