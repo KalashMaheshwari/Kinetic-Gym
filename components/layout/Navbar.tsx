@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from 'framer-motion';
 import { Magnetic } from '../ui/Magnetic';
-import { Menu, X, ArrowRight, Instagram, Twitter, Mail } from 'lucide-react';
+import { Menu, X, Instagram, Twitter, Mail, ArrowRight, ScanLine } from 'lucide-react';
 
 // --- DESKTOP COMPONENTS (Unchanged) ---
 const CYCLES_PER_LETTER = 2;
@@ -103,10 +103,9 @@ export default function Navbar() {
 
   return (
     <>
-      {/* --- DESKTOP NAVBAR --- */}
+      {/* --- DESKTOP NAVBAR (STRICTLY UNTOUCHED) --- */}
       <div className="hidden md:block">
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} 
-          // FIX: Removed mix-blend-difference to ensure solid logo
           className="fixed top-8 left-8 z-[100] h-[44px] flex items-center gap-3">
           <div className="w-3 h-3 bg-accent rounded-full animate-pulse" />
           <span className="font-syncopate text-xl font-bold tracking-widest text-white leading-none pt-1">KINETIC</span>
@@ -127,21 +126,38 @@ export default function Navbar() {
 
       {/* --- MOBILE NAVBAR --- */}
       <div className="md:hidden">
-        {/* FIX: Removed mix-blend-difference here too */}
         <div className="fixed top-6 left-6 z-[40] flex items-center gap-2 pointer-events-none">
            <div className="w-2 h-2 bg-accent rounded-full animate-pulse" />
            <span className="font-syncopate font-bold text-lg text-white tracking-widest">KINETIC</span>
         </div>
 
-        <motion.button 
-          onClick={() => setMobileMenuOpen(true)}
-          initial={{ x: 100 }} animate={{ x: 0 }} transition={{ delay: 0.5, type: "spring" }}
-          className="fixed top-8 right-0 z-50 flex items-center gap-2 bg-accent text-black px-4 py-3 font-mono text-[10px] font-bold tracking-widest origin-right active:scale-95 shadow-2xl"
-          style={{ clipPath: 'polygon(10% 0, 100% 0, 100% 100%, 10% 100%, 0 50%)' }}
+        {/* --- FROSTED "AEROGEL" TRIGGER --- */}
+        <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className={`fixed top-8 right-0 z-[110] group flex items-center gap-3 pl-5 pr-4 py-3 
+                        bg-black/20 backdrop-blur-md border-l border-y border-white/20
+                        rounded-l-xl
+                        shadow-[-5px_5px_20px_rgba(0,0,0,0.5)] 
+                        transition-all duration-300 active:pr-5 active:bg-black/40
+                        `}
         >
-          <span className="mr-1">MENU</span>
-          <Menu className="w-3 h-3" />
-        </motion.button>
+             {/* The Neon Accent Bar */}
+             <div className="absolute left-1.5 top-1/2 -translate-y-1/2 w-1 h-[60%] bg-accent rounded-full group-hover:shadow-[0_0_10px_#CCFF00] transition-all duration-300" />
+
+             {/* Text Label */}
+             <span className="font-syncopate text-[10px] font-bold text-white tracking-[0.2em] w-[45px] text-center group-hover:text-accent transition-colors ml-1">
+                {mobileMenuOpen ? 'CLOSE' : 'MENU'}
+             </span>
+
+             {/* Separator */}
+             <div className="w-[1px] h-4 bg-white/10 group-hover:bg-white/30 transition-colors" />
+
+             {/* Animated Icon */}
+             <div className="relative w-5 h-5 flex items-center justify-center">
+                <Menu className={`absolute w-full h-full text-white transition-all duration-300 group-hover:text-accent ${mobileMenuOpen ? 'opacity-0 rotate-90 scale-50' : 'opacity-100 rotate-0 scale-100'}`} strokeWidth={2} />
+                <X className={`absolute w-full h-full text-red-500 transition-all duration-300 ${mobileMenuOpen ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 -rotate-90 scale-50'}`} strokeWidth={2} />
+             </div>
+        </button>
 
         <AnimatePresence>
           {mobileMenuOpen && (
@@ -155,17 +171,36 @@ export default function Navbar() {
                 <motion.div 
                     initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
                     transition={{ type: "spring", damping: 30, stiffness: 300 }}
-                    className="fixed top-0 bottom-0 right-0 w-[75%] z-[100] bg-[#050505] border-l border-white/10 flex flex-col shadow-2xl"
+                    className="fixed top-0 bottom-0 right-0 w-[90%] z-[100] bg-[#050505] border-l border-white/10 flex flex-col shadow-2xl overflow-hidden"
                 >
-                    <div className="p-8 flex justify-end border-b border-white/10">
-                        <button onClick={() => setMobileMenuOpen(false)} className="text-white/50 hover:text-accent p-2"><X className="w-8 h-8" /></button>
+                    {/* MENU BACKGROUNDS - Scanline Removed */}
+                    {/* 1. Cyber Grid */}
+                    <div className="absolute inset-0 z-0 opacity-10 pointer-events-none bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px]" />
+                    
+                    {/* Header */}
+                    <div className="relative z-10 p-8 flex justify-between items-center border-b border-white/10 h-[96px] bg-black/20">
+                         <div className="flex items-center gap-2 text-accent">
+                            <ScanLine className="w-4 h-4 animate-pulse" />
+                            <div className="font-mono text-[10px] tracking-widest">SYSTEM_NAVIGATION</div>
+                         </div>
                     </div>
 
-                    <div className="flex-1 flex flex-col justify-center px-8 gap-6">
+                    {/* LINKS CONTAINER */}
+                    <div className="relative z-10 flex-1 flex flex-col justify-center px-8 gap-8">
                         {navItems.map((item, i) => (
-                        <motion.div key={item.name} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 + (i * 0.05) }}>
-                            <button onClick={() => scrollToSection(item.id)} className="group w-full text-left relative">
-                                <span className="font-syncopate text-xl md:text-2xl font-black uppercase text-transparent group-active:text-accent transition-all duration-300" style={{ WebkitTextStroke: '1px white' }}>
+                        <motion.div key={item.name} initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 + (i * 0.05) }} className="relative group">
+                            {/* Giant Watermark Number */}
+                            <span className="absolute -top-6 -left-4 text-[6rem] font-black text-white/[0.03] font-mono pointer-events-none transition-all group-active:text-accent/[0.05]">
+                                0{i + 1}
+                            </span>
+                            
+                            <button onClick={() => scrollToSection(item.id)} className="w-full text-left relative pl-4">
+                                {/* Active Indicator Line */}
+                                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-0 bg-accent transition-all duration-300 group-active:h-full group-hover:h-full" />
+                                
+                                {/* Hollow-to-Fill Typography */}
+                                <span className="font-syncopate text-3xl font-black uppercase text-transparent transition-all duration-300 group-active:text-accent group-hover:text-white" 
+                                      style={{ WebkitTextStroke: '1px rgba(255,255,255,0.7)' }}>
                                     {item.name}
                                 </span>
                             </button>
@@ -173,13 +208,22 @@ export default function Navbar() {
                         ))}
                     </div>
 
-                    <div className="p-8 border-t border-white/10 bg-white/5">
-                        <button className="w-full py-4 bg-accent text-black font-syncopate font-black tracking-widest text-sm hover:bg-white transition-colors mb-8">JOIN NOW</button>
+                    {/* Footer */}
+                    <div className="relative z-10 p-8 border-t border-white/10 bg-white/[0.02]">
+                        <button className="w-full py-4 border border-accent text-accent font-syncopate font-black tracking-widest text-sm hover:bg-accent hover:text-black transition-all active:scale-[0.98] mb-8 flex items-center justify-between px-6 group">
+                            {/* CHANGED TEXT TO "JOIN NOW" */}
+                            <span>JOIN NOW</span>
+                            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                        </button>
                         <div className="flex justify-between items-end">
                             <div className="flex gap-6 text-white/40">
-                                <Instagram className="w-5 h-5" /><Twitter className="w-5 h-5" /><Mail className="w-5 h-5" />
+                                <Instagram className="w-5 h-5 hover:text-white transition-colors" />
+                                <Twitter className="w-5 h-5 hover:text-white transition-colors" />
+                                <Mail className="w-5 h-5 hover:text-white transition-colors" />
                             </div>
-                            <div className="text-right font-mono text-[10px] text-white/20">SECURE_V.2</div>
+                            <div className="text-right font-mono text-[10px] text-white/20">
+                                ENCRYPTED // <span className="text-accent">SECURE</span>
+                            </div>
                         </div>
                     </div>
                 </motion.div>
