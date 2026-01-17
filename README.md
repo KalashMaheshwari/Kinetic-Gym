@@ -1,4 +1,4 @@
-# KINETIC // FUTURE OF HUMAN PERFORMANCE
+# KINETIC // THE ANTI-GYM
 
 ![Project Banner](public/mob-bg.jpg)
 ![preview](public/Preview.jpg)
