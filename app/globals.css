@@ -8,6 +8,7 @@
   --accent: #CCFF00;
 }
 
+/* Hide default cursor globally */
 * {
   cursor: none !important;
 }
@@ -15,70 +16,45 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: 'JetBrains Mono', monospace;
+  /* Use the optimized variable from layout.tsx */
+  font-family: var(--font-jetbrains), monospace;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
-/* --- NEW FONT CLASS --- */
+/* --- TYPOGRAPHY UTILITIES --- */
 .font-syncopate {
   font-family: var(--font-syncopate), sans-serif;
-  /* Syncopate looks best uppercase, so let's force that here too */
   text-transform: uppercase;
 }
 
-.font-gothic {
-  font-family: 'UnifrakturMaguntia', cursive;
-}
-
 .font-mono {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-jetbrains), monospace;
 }
 
+/* --- PERFORMANCE UTILITIES --- */
 @layer utilities {
-  .text-accent {
-    color: var(--accent);
-  }
+  .text-accent { color: var(--accent); }
+  .bg-accent { background-color: var(--accent); }
   
-  .bg-accent {
-    background-color: var(--accent);
-  }
-
-  .watermark {
-    font-size: 20vw;
-    font-weight: 900;
-    color: rgba(255, 255, 255, 0.02);
+  /* The optimized noise class */
+  .bg-noise {
+    background-image: url('/noise.png'); /* Ensure this file exists in /public */
+    background-repeat: repeat;
     pointer-events: none;
-    user-select: none;
-    white-space: nowrap;
-  }
-
-  .grid-pattern {
-    background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-    background-size: 40px 40px;
+    mix-blend-mode: overlay;
+    opacity: 0.05;
   }
 }
 
-/* --- CUSTOM SCROLLBAR --- */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: #050505;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #333;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #CCFF00; /* Neon Accent on hover */
-}
+/* --- SCROLLBAR --- */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #050505; }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #CCFF00; }
 
 /* Firefox support */
-* {
+html {
   scrollbar-width: thin;
   scrollbar-color: #333 #050505;
 }

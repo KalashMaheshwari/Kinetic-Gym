@@ -20,7 +20,6 @@ export default function Cursor() {
 
   // 2. Velocity Tilt (Tight & Heavy)
   const mouseVelocityX = useVelocity(mouseX);
-  // Range [-30, 30] degrees ensures it leans but doesn't spin
   const rotateVal = useTransform(mouseVelocityX, [-2000, 2000], [-30, 30], { clamp: true });
   const smoothRotate = useSpring(rotateVal, { damping: 50, stiffness: 400 });
 
@@ -107,16 +106,15 @@ export default function Cursor() {
       >
         <div className="relative w-8 h-8 drop-shadow-[0_4px_6px_rgba(0,0,0,0.5)]">
             
-            {/* LAYER 1: THE FROST (Blurry Inside) */}
-            {/* We use clip-path to match the svg arrow shape exactly so the square div doesn't show */}
+            {/* OPTIMIZED: Replaced backdrop-blur with solid dark fill */}
             <div 
-                className="absolute inset-0 bg-black/40 backdrop-blur-[3px]"
+                className="absolute inset-0 bg-black/90"
                 style={{
                     clipPath: "polygon(12.5% 12.5%, 42.1% 87.5%, 54.6% 54.6%, 87.5% 42.1%)"
                 }}
             />
 
-            {/* LAYER 2: THE ARMOR (Stroke) */}
+            {/* Stroke Layer */}
             <svg 
                 width="100%" 
                 height="100%" 

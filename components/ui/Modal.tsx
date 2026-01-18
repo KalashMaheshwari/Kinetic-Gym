@@ -16,12 +16,13 @@ export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8">
+          {/* OPTIMIZED: Reduced blur from xl to md */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/90 backdrop-blur-xl"
+            className="absolute inset-0 bg-black/90 backdrop-blur-md"
           />
           <motion.div
             initial={{ scale: 0.9, opacity: 0, y: 20 }}

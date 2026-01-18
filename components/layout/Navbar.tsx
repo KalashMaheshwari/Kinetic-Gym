@@ -43,7 +43,6 @@ const LiquidButton = () => {
   const circleRef = useRef<HTMLSpanElement>(null);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
-    // Only calculate Liquid Fill Position
     if (circleRef.current) {
         circleRef.current.style.left = `${e.nativeEvent.offsetX}px`;
         circleRef.current.style.top = `${e.nativeEvent.offsetY}px`;
@@ -57,7 +56,6 @@ const LiquidButton = () => {
   };
 
   const handleMouseLeave = () => {
-    // Reset Liquid Fill
     if (circleRef.current) {
         circleRef.current.style.transform = "translate(-50%, -50%) scale(0)";
     }
@@ -116,7 +114,8 @@ export default function Navbar() {
         </motion.div>
 
         <motion.div variants={{ visible: { y: 0, opacity: 1 }, hidden: { y: -100, opacity: 0 } }} animate={hidden ? "hidden" : "visible"} transition={{ duration: 0.35 }} className="fixed top-8 left-0 w-full z-[90] flex justify-center px-6 pointer-events-none">
-          <nav className="pointer-events-auto bg-white/5 backdrop-blur-lg border border-white/10 px-10 py-3 rounded-full flex items-center gap-4 shadow-2xl">
+          {/* OPTIMIZED: Reduced blur from lg to md for performance */}
+          <nav className="pointer-events-auto bg-white/5 backdrop-blur-md border border-white/10 px-10 py-3 rounded-full flex items-center gap-4 shadow-2xl">
             {['PHILOSOPHY', 'METHOD', 'SPACE', 'MEMBERSHIP'].map((item) => (
               <ScrambleLink key={item} href={`#${item.toLowerCase()}`}>{item}</ScrambleLink>
             ))}
@@ -131,11 +130,11 @@ export default function Navbar() {
            <span className="font-syncopate font-bold text-lg text-white tracking-widest">KINETIC</span>
         </div>
 
-        {/* --- FROSTED "AEROGEL" TRIGGER --- */}
+        {/* OPTIMIZED: Reduced blur from md to sm */}
         <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className={`fixed top-8 right-0 z-[110] group flex items-center gap-3 pl-5 pr-4 py-3 
-                        bg-black/20 backdrop-blur-md border-l border-y border-white/20
+                        bg-black/20 backdrop-blur-sm border-l border-y border-white/20
                         rounded-l-xl
                         shadow-[-5px_5px_20px_rgba(0,0,0,0.5)] 
                         transition-all duration-300 active:pr-5 active:bg-black/40
@@ -155,10 +154,11 @@ export default function Navbar() {
         <AnimatePresence>
           {mobileMenuOpen && (
             <>
+                {/* OPTIMIZED: Replaced backdrop-blur with solid opacity for faster mobile rendering */}
                 <motion.div 
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="fixed inset-0 z-[90] bg-black/60 backdrop-blur-sm"
+                    className="fixed inset-0 z-[90] bg-black/80"
                 />
 
                 <motion.div 
