@@ -1,16 +1,16 @@
-# KINETIC // FUTURE OF HUMAN PERFORMANCE
+# KINETIC || THE ANTI-GYM
 
 ![Project Banner](public/mob-bg.jpg)
-![preview](public/Preview.jpg)
+![Preview](public/Preview.jpg)
 
 <div align="center">
 
-[![Vercel App](https://img.shields.io/badge/Vercel-Deployed-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://your-project-name.vercel.app)
+[![Netlify](https://img.shields.io/badge/Netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white)](https://kineticgym.netlify.app/)
 [![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
-[**🚀 VIEW LIVE DEPLOYMENT**](https://your-project-name.vercel.app)
+[**🚀 VIEW LIVE DEPLOYMENT**](https://kineticgym.netlify.app/)
 
 </div>
 
