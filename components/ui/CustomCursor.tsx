@@ -24,6 +24,9 @@ export default function Cursor() {
   const smoothRotate = useSpring(rotateVal, { damping: 50, stiffness: 400 });
 
   useEffect(() => {
+    // Optimization: Don't run listeners on mobile
+    if (typeof window !== 'undefined' && window.innerWidth < 768) return;
+
     const moveCursor = (e: MouseEvent) => {
       if (!isVisible) setIsVisible(true);
       mouseX.set(e.clientX);
@@ -87,14 +90,18 @@ export default function Cursor() {
 
   return (
     <>
+      {/* UPDATE: Wrap cursor:none in media query so mobile gets default cursor back */}
       <style jsx global>{`
-        body, a, button, input, textarea {
-          cursor: none !important;
+        @media (min-width: 768px) {
+          body, a, button, input, textarea {
+            cursor: none !important;
+          }
         }
       `}</style>
 
+      {/* UPDATE: Add 'hidden md:block' to hide element on mobile */}
       <motion.div
-        className="fixed top-0 left-0 z-[99999] pointer-events-none will-change-transform"
+        className="hidden md:block fixed top-0 left-0 z-[99999] pointer-events-none will-change-transform"
         style={{ 
           x: mouseX, 
           y: mouseY,
@@ -106,7 +113,7 @@ export default function Cursor() {
       >
         <div className="relative w-8 h-8 drop-shadow-[0_4px_6px_rgba(0,0,0,0.5)]">
             
-            {/* OPTIMIZED: Replaced backdrop-blur with solid dark fill */}
+            {/* OPTIMIZED: Solid dark fill */}
             <div 
                 className="absolute inset-0 bg-black/90"
                 style={{
