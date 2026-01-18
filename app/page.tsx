@@ -282,15 +282,28 @@ export default function Home() {
           </div>
         </div>
 
-        {/* MOBILE HERO (Optimized) */}
-        <div className="block md:hidden relative w-full h-[60vh] will-change-transform">
-          <img
-            src="/mob-bg.jpg"
-            alt="Background"
-            className="w-full h-full object-cover grayscale contrast-125 brightness-[0.5]"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/60" />
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%] pointer-events-none opacity-50" />
+        {/* MOBILE HERO (Now with Video) */}
+        <div className="block md:hidden relative w-full h-[60vh] will-change-transform overflow-hidden">
+
+          {/* 1. BACKGROUND VIDEO LAYER */}
+          <div className="absolute inset-0 z-0">
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline // CRITICAL for iOS to play inline
+              poster="/mob-bg.jpg" // Fallback image if battery saver is on
+              className="w-full h-full object-cover grayscale contrast-125 brightness-[0.5]"
+            >
+              <source src="/video-bg.mp4" type="video/mp4" />
+            </video>
+          </div>
+
+          {/* 2. OVERLAYS (Keep these to ensure text is readable) */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/60 z-10" />
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%] pointer-events-none opacity-50 z-10" />
+
+          {/* 3. CONTENT (Unchanged) */}
           <div className="absolute inset-0 flex flex-col items-center justify-center px-4 z-20">
             <div className="mb-6 px-3 py-1 border border-white/20 bg-black/40 backdrop-blur-md rounded-full flex items-center gap-2">
               <div className="w-1.5 h-1.5 bg-accent rounded-full animate-pulse" />
