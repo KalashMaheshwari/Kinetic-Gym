@@ -5,7 +5,6 @@ import { SmoothScroll } from "@/components/providers/SmoothScroll";
 import CustomCursor from "@/components/ui/CustomCursor";
 import Navbar from "@/components/layout/Navbar";
 
-// 1. Display Font (Headlines)
 const syncopate = Syncopate({
   subsets: ["latin"],
   weight: ["400", "700"],
@@ -13,7 +12,6 @@ const syncopate = Syncopate({
   display: "swap",
 });
 
-// 2. Primary Font (Body/UI) - Optimized Google Load
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800"],
@@ -21,17 +19,36 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-// 2. Keep standard metadata here (Title, Description, Icons)
 export const metadata: Metadata = {
   title: 'KINETIC | The Anti-Gym',
   description: 'A brutalist, high-performance training facility designed for biological optimization.',
   icons: {
     icon: '/icon.png',
   },
-  // REMOVE themeColor from here
+  openGraph: {
+    title: 'KINETIC | The Anti-Gym',
+    description: 'Biological optimization facility. Dark, raw, and focused.',
+    url: 'https://kineticgym.netlify.app',
+    siteName: 'KINETIC',
+    images: [
+      {
+        url: '/preview.jpg', // <--- Points to public/preview.jpg
+        width: 1200,
+        height: 630,
+        alt: 'KINETIC Facility Preview',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'KINETIC | The Anti-Gym',
+    description: 'Biological optimization facility.',
+    images: ['/preview.jpg'], // <--- Same image for Twitter cards
+  },
 };
 
-// 3. Add this new Viewport export
 export const viewport: Viewport = {
   themeColor: '#CCFF00',
 };
